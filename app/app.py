@@ -164,7 +164,8 @@ def root():
     <input type="submit" value="Upload" name="submit">
 </form>
 <h2>Pour extraire une image :</h2>
-TODO...
+/nom_codé_de_l_image.extension
+/nom_codé_de_l_image.extension?w=xxx&h=yyy pour obtenir l'image resizée
 """
 
 
