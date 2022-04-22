@@ -16,6 +16,8 @@ from flask_limiter.util import get_remote_address
 from wand.exceptions import MissingDelegateError
 from wand.image import Image
 from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.security import check_password_hash
+from flask_httpauth import HTTPBasicAuth
 
 import settings
 
@@ -34,6 +36,13 @@ if settings.NUDE_FILTER_MAX_THRESHOLD:
     nude_classifier = NudeClassifier()
 else:
     nude_classifier = None
+
+auth = HTTPBasicAuth()
+@auth.verify_password
+def verify_password(username, password):
+    if username in settings.users:
+        return check_password_hash(settings.users.get(username), password)
+    return False
 
 
 @app.after_request
@@ -145,13 +154,17 @@ def _resize_image(path, width, height):
 
 
 @app.route("/", methods=["GET"])
+@auth.login_required
 def root():
     return """
 <h1>Les images d'Olfa...</h1>
+<h2>Pour enregistrer une image :</h2>
 <form action="/" method="post" enctype="multipart/form-data">
     <input type="file" name="file" id="file">
     <input type="submit" value="Upload" name="submit">
 </form>
+<h2>Pour extraire une image :</h2>
+TODO...
 """
 
 
@@ -170,6 +183,7 @@ def liveness():
         ]
     )
 )
+@auth.login_required
 def upload_image():
     _clear_imagemagick_temp_files()
 
