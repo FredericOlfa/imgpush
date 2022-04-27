@@ -164,8 +164,8 @@ def root():
     <input type="submit" value="Upload" name="submit">
 </form>
 <h2>Pour extraire une image :</h2>
-/nom_codé_de_l_image.extension
-/nom_codé_de_l_image.extension?w=xxx&h=yyy pour obtenir l'image resizée
+<p>/nom_codé_de_l_image.extension</p>
+<p>/nom_codé_de_l_image.extension?w=xxx&h=yyy pour obtenir l'image resizée</p>
 """
 
 
@@ -270,6 +270,12 @@ def get_image(filename):
 
     return send_from_directory(settings.IMAGES_DIR, filename)
 
+@app.route("/catalogue")
+@auth.login_required
+def catalogue():
+    path = settings.IMAGES_DIR    
+    images = os.listdir(path)
+    return jsonify(images) #une liste TODO : images en miniature + url.
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, threaded=True)
